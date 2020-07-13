@@ -1,5 +1,5 @@
 import numpy as np
-from src.utils.checkInput import checkInput
+from lisa_forwardmodel.utils.checkInput import checkInput
 
 
 def delete_zeros(list_ref, list_pred):

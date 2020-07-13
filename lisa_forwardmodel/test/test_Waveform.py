@@ -5,10 +5,10 @@ myPath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, myPath + '/../')
 import numpy as np
 
-from src.objects.Simulation import Simulation
-from src.objects.Waveforms import WaveformSimpleBinaries
-from src.utils.readParameters import read_parameter_fun
-from src.utils.test_utils import MAPE
+from lisa_forwardmodel.objects.Simulation import Simulation
+from lisa_forwardmodel.objects.Waveforms import WaveformSimpleBinaries
+from lisa_forwardmodel.utils.readParameters import read_parameter_fun
+from lisa_forwardmodel.utils.test_utils import MAPE
 
 
 def test_GalBin():
