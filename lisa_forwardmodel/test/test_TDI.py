@@ -6,12 +6,12 @@ sys.path.insert(0, myPath + '/../')
 # import numpy as np
 # import matplotlib.pyplot as plt
 
-import src.objects.Waveforms as WF
-import src.objects.LISA as DET
-from src.objects.Simulation import Simulation
-from src.objects.TDI import InterSCDopplerObservable, TDI
-from src.utils.readParameters import read_parameter_fun
-from src.utils.test_utils import MAPE
+import lisa_forwardmodel.objects.Waveforms as WF
+import lisa_forwardmodel.objects.LISA as DET
+from lisa_forwardmodel.objects.Simulation import Simulation
+from lisa_forwardmodel.objects.TDI import InterSCDopplerObservable, TDI
+from lisa_forwardmodel.utils.readParameters import read_parameter_fun
+from lisa_forwardmodel.utils.test_utils import MAPE
 
 
 def test_InterSCObs_y():
