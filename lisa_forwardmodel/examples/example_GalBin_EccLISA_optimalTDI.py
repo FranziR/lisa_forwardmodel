@@ -20,3 +20,5 @@ from lisa_forwardmodel.objects.Waveforms import WaveformSimpleBinaries
 
 parser = argparse.ArgumentParser()
 parser.parse_args()
+
+parser.add_argument()
