@@ -58,10 +58,6 @@ gast==0.2.2
 gevent==1.2.2
 glob2==0.5
 gmpy2==2.0.8
-google-auth @ file:///tmp/build/80754af9/google-auth_1594357566944/work
-google-auth-oauthlib==0.4.1
-google-pasta==0.1.8
-googleapis-common-protos==1.6.0
 greenlet==0.4.12
 grpcio==1.14.1
 h5py==2.10.0
