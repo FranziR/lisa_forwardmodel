@@ -6,7 +6,6 @@ with open("README.md", "r") as fh:
 setup(
     name='lisa_forwardmodel',
     version='0.1',
-    packages=find_packages(),
     url='',
     license='',
     author='Franziska Riegger',
