@@ -1,0 +1,11 @@
+# speed of light in m/s
+c = 299792458
+# Newtonian Gravitation Constant in m^3/(kg*s^2)
+G = 6.67259e-11
+# seconds per year
+secs/year = 31536000.0
+years/sec = 3.1709791983764586e-8
+# mass of Sun in kg
+massSun = 1.9889e30
+# number of meters in a parsec
+m/parsec = 3.0856675807e16

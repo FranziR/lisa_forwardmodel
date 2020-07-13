@@ -1,0 +1,14 @@
+### Parameters for Simulation ###
+
+# time interval of observation
+# in fractions of years
+unit = seconds
+t_min = 0
+#t_max = 31557585.0
+t_max = 33554000.0
+#t_max = 150
+
+# time resolution of temporal simulation
+# t_res = t_delta
+t_res = 15
+#t_res = 128

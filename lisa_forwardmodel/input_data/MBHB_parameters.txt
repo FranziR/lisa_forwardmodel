@@ -1,0 +1,45 @@
+## GW parameter ##
+
+source = GB
+no_parameters = 9
+PN = 0
+
+## BH properties
+# Masses with respect to one Sun mass
+m1/massSun = 5*10**5
+m2/massSun = 3*10**5
+# spin TRUE/FALSE?
+spin = False
+# dimensionless spin parameters
+#chi1
+#chi2
+# inclination of spin (angular momentum)
+# polar angles
+#theta_s1
+#theta_s2
+# azimuth
+#psi_s1
+#psi_s2
+
+## Binary location
+# longitude (East/West) in radian
+long = 2.5791
+# latitude (North/South) in radian
+lat = 0.6842
+# luminosity distance in pc (parsec)
+D_L = 106.28e9
+# GW plane inclination in radian (of orbital angular momentum L)
+iota = 0.9273
+# polarization direction in radian
+psi = 1.4392
+# azimuth orbital angular momentum L
+#phi_l
+# polar angle orbital momentum L
+#theta_l
+
+## Binary evolution
+# time of coalescence in year
+t_c = 0.458333
+# phase of coalescence in radian
+phi_c = 0.3291
+

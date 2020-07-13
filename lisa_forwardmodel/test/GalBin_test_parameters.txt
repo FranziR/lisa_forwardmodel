@@ -1,0 +1,26 @@
+## GW parameter ##
+
+source = GalBin
+no_parameters = 8
+
+## Binary location
+# longitude (East/West) in radian
+long = -2.75291
+# latitude (North/South) in radian
+lat = 0.312414
+# luminosity distance in pc (parsec)
+# D_L =
+# GW plane inclination in radian (of orbital angular momentum L)
+iota = 0.523599
+# polarization direction in radian
+psi = 3.5621656
+
+## Binary evolution
+# Initial phase
+phi_0 = 3.0581565
+# frequency
+frequency = 0.00135962
+# temporal evolution of frequency
+frequency_dot = 8.945812789786104E-19
+# amplitudes
+amplitude = 1.07345E-22
