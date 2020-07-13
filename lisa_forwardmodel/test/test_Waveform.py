@@ -66,5 +66,6 @@ def test_GalBin():
     print('GalBin TEST SUCCESS')
     return 0
 
+
 if __name__ == '__main__':
     test_GalBin()
