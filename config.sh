@@ -5,7 +5,6 @@
 
 conda_installation()
 {
-    download_dir="temp" # check which OS to define download link and name of installation file
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then #  echo "Linux"
         link="https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh";
      elif [[ "$OSTYPE" == "darwin"* ]]; then #   echo "Mac"
