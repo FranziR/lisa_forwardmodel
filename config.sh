@@ -38,7 +38,7 @@ conda_installation()
      wget $link -P $download_dir
    fi
 
-   printf 'yq\nq\ny\' | bash ./"$download_dir/$installation_file" # install file
+   printf 'yes\n' | bash ./"$download_dir/$installation_file" # install file
 #    bash ./"$download_dir/$installation_file" # install file
 #   echo -ne '\n' | <yourfinecommandhere>
 }
