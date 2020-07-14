@@ -10,24 +10,24 @@ install:
   # We do this conditionally because it saves us some downloading if the
   # version is the same.
   - echo "$OSTYPE"
-  - if [[ "$OSTYPE" == "linux-gnu"* ]]; then #  echo "Linux"
-      link3="https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-ppc64le.sh";
-      link2="https://repo.anaconda.com/archive/Anaconda2-2019.10-Linux-ppc64le.sh";
-    elif [[ "$OSTYPE" == "darwin"* ]]; then #   echo "Mac"
-      link3="https://repo.anaconda.com/archive/Anaconda3-2020.02-MacOSX-x86_64.sh";
-      link2="https://repo.anaconda.com/archive/Anaconda2-2019.10-MacOSX-x86_64.sh";
-    fi
-  - echo $link3
-  - if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then
-      wget $link3 -O anaconda.sh;
-    else
-      wget $link2 -O anaconda.sh;
-    fi
-#  - if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then
-#      wget https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-ppc64le.sh -O anaconda.sh;
-#    else
-#      wget https://repo.anaconda.com/archive/Anaconda2-2019.10-Linux-ppc64le.sh -O anaconda.sh;
+#  - if [[ "$OSTYPE" == "linux-gnu"* ]]; then #  echo "Linux"
+#      link3="https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-ppc64le.sh";
+#      link2="https://repo.anaconda.com/archive/Anaconda2-2019.10-Linux-ppc64le.sh";
+#    elif [[ "$OSTYPE" == "darwin"* ]]; then #   echo "Mac"
+#      link3="https://repo.anaconda.com/archive/Anaconda3-2020.02-MacOSX-x86_64.sh";
+#      link2="https://repo.anaconda.com/archive/Anaconda2-2019.10-MacOSX-x86_64.sh";
 #    fi
+#  - echo $link3
+#  - if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then
+#      wget $link3 -O anaconda.sh;
+#    else
+#      wget $link2 -O anaconda.sh;
+#    fi
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then
+      wget https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-ppc64le.sh -O anaconda.sh;
+    else
+      wget https://repo.anaconda.com/archive/Anaconda2-2019.10-Linux-ppc64le.sh -O anaconda.sh;
+    fi
   - bash anaconda.sh -b
   - source "$HOME/anaconda/etc/profile.d/conda.sh"
   - hash -r
