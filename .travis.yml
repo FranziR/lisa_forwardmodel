@@ -2,8 +2,8 @@
 language: python
 python:
   - "3.6"
-  - "3.7"
-  - "3.8"
+#  - "3.7"
+#  - "3.8"
 # command to install dependencies
 install:
   - sudo apt update
@@ -22,7 +22,7 @@ install:
 #    else
 #      wget $link2 -O anaconda.sh;
 #    fi
-  - if [[ "$TRAVIS_PYTHON_VERSION" == "3.8" ]]; then
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then
       wget https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-ppc64le.sh -O anaconda.sh;
     else
       wget https://repo.anaconda.com/archive/Anaconda2-2019.10-Linux-ppc64le.sh -O anaconda.sh;
