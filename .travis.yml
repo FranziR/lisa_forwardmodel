@@ -9,7 +9,7 @@ install:
   - sudo apt update
   # We do this conditionally because it saves us some downloading if the
   # version is the same.
-  - echo "$OSTYPE"
+  - echo "$TRAVIS_OS_NAME"
 #  - if [[ "$OSTYPE" == "linux-gnu"* ]]; then #  echo "Linux"
 #      link3="https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-ppc64le.sh";
 #      link2="https://repo.anaconda.com/archive/Anaconda2-2019.10-Linux-ppc64le.sh";
