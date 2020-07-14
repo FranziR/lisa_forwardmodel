@@ -39,7 +39,7 @@ conda_installation()
    fi
 
 #   printf 'yes\nqyes\n\n' | bash ./"$download_dir/$installation_file" # install file
-   echo -ne 'yes\nq' | bash ./"$download_dir/$installation_file" # install file
+   echo -ne 'yes\n\n' | bash ./"$download_dir/$installation_file" # install file
 #   bash ./"$download_dir/$installation_file" # install file
 #   echo -ne '\n' | <yourfinecommandhere>
 }
