@@ -38,7 +38,8 @@ conda_installation()
      wget $link -P $download_dir
    fi
 
-   bash ./"$download_dir/$installation_file" # install file
+   yes | bash ./"$download_dir/$installation_file" # install file
+#   echo -ne '\n' | <yourfinecommandhere>
 }
 #
 #if [[ "$(conda --version)" == "conda "* ]];
