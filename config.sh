@@ -38,7 +38,8 @@ conda_installation()
      wget $link -P $download_dir
    fi
 
-   printf 'y\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n' | bash ./"$download_dir/$installation_file" # install file
+   printf 'yq\nq\ny\' | bash ./"$download_dir/$installation_file" # install file
+#    bash ./"$download_dir/$installation_file" # install file
 #   echo -ne '\n' | <yourfinecommandhere>
 }
 #
