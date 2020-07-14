@@ -21,4 +21,18 @@ from lisa_forwardmodel.objects.Waveforms import WaveformSimpleBinaries
 parser = argparse.ArgumentParser()
 parser.parse_args()
 
-parser.add_argument()
+parser.add_argument('-o','--orbit',
+                    default = 'eccentric',
+                    type = str,
+                    choices = ['circular', 'eccentric'],
+                    help = 'Argument sets orbits of LISA SC around Sun. '
+                           'Choices: circular or eccentric. '
+                           'Default: eccentric')
+
+parser.add_argument('-s','--source',
+                    default = 'GalBin',
+                    type = str,
+                    choices = ['GalBin'],
+                    help = 'Defines the source of the gravitational Waves. '
+                           'Choices: GalBin (to be extended). '
+                           'Default: GalBin')
