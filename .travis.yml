@@ -13,11 +13,11 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then #  echo "Linux"
       link3="https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-ppc64le.sh";
       link2="https://repo.anaconda.com/archive/Anaconda2-2019.10-Linux-ppc64le.sh";
-    elif [[ "$TRAVIS_OS_NAME" == "darwin" ]]; then #   echo "Mac"
-      link3="https://repo.anaconda.com/archive/Anaconda3-2020.02-MacOSX-x86_64.sh";
-      link2="https://repo.anaconda.com/archive/Anaconda2-2019.10-MacOSX-x86_64.sh";
+#    elif [[ "$TRAVIS_OS_NAME" == "darwin" ]]; then #   echo "Mac"
+#      link3="https://repo.anaconda.com/archive/Anaconda3-2020.02-MacOSX-x86_64.sh";
+#      link2="https://repo.anaconda.com/archive/Anaconda2-2019.10-MacOSX-x86_64.sh";
     fi
-  - echo $link3
+#  - echo $link3
 #  - if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then
 #      wget $link3 -O anaconda.sh;
 #    else
