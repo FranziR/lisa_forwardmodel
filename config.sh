@@ -13,10 +13,10 @@ conda_installation()
     fi
 
     wget $link -O anaconda.sh;
-    bash anaconda.sh -b -p $HOME/anaconda
-    source "$HOME/anaconda/etc/profile.d/conda.sh"
-    hash -r
-    conda config --set always_yes yes --set changeps1 no
+    bash anaconda.sh -b -p "$HOME/anaconda"
+#    source "$HOME/anaconda/etc/profile.d/conda.sh"
+#    hash -r
+#    conda config --set always_yes yes --set changeps1 no
     conda update -q conda
     conda info -a
 
