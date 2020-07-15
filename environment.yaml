@@ -194,6 +194,7 @@ dependencies:
   - pyrsistent
   - pysocks
   - pytest
+  - pytest-runner
   - python
   - python-dateutil
   - pytz
