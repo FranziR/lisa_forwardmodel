@@ -40,7 +40,7 @@ dependencies:
   - cloudpickle=0.4.0
   - colorama=0.3.9
   - conda=4.8.3
-  - conda-build=2.1.5
+  - conda-build
   - conda-env=2.6.0
   - conda-package-handling=1.6.1
   - conda-verify=2.0.0
@@ -110,7 +110,7 @@ dependencies:
   - lazy-object-proxy=1.3.1
   - libedit
   - libffi=3.2.1
-  - libiconv=1.16
+  - libiconv
   - libpng=1.6.37
   - libprotobuf=3.12.3
   - libsodium=1.0.18
