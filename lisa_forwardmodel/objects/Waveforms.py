@@ -8,8 +8,8 @@ from numpy import cos as cos
 from numpy import sin as sin
 
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'utils'))
-from src.utils.readParameters import read_parameter_fun
-from src.objects.Simulation import Simulation
+from lisa_forwardmodel.utils.readParameters import read_parameter_fun
+from lisa_forwardmodel.objects.Simulation import Simulation
 
 
 class WaveformClass:
