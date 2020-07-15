@@ -13,12 +13,12 @@ from lisa_forwardmodel.utils.readParameters import read_parameter_fun
 WFobjects = tuple(
     [eval('WF.' + m[0]) for m in inspect.getmembers(WF, inspect.isclass) if m[1].__module__ == WF.__name__])
 
-import src.objects.LISA as DET
+import lisa_forwardmodel.objects.LISA as DET
 
 DETobjects = tuple(
     [eval('DET.' + m[0]) for m in inspect.getmembers(DET, inspect.isclass) if m[1].__module__ == DET.__name__])
 
-import src.objects.LISA as NOI
+import lisa_forwardmodel.objects.LISA as NOI
 
 NOIobjects = tuple(
     [eval('NOI.' + m[0]) for m in inspect.getmembers(NOI, inspect.isclass) if m[1].__module__ == NOI.__name__])
