@@ -16,7 +16,7 @@ def test_orbit():
 
     cur_path = os.path.dirname(os.path.abspath(__file__))
     t_ref = np.loadtxt(os.path.join(cur_path, 'resources/SpaceInterferometer/Orbit/Circular/pCIR_1yr_time.out'))
-    t_ref_ecc = np.loadtxt(os.path.join(cur_path, 'resources/SpaceInterferometer/Orbit/Eccentric/pEcc_1yr_time.out'))
+    t_ref_ecc = np.loadtxt(os.path.join(cur_path, 'resources/SpaceInterferometer/Orbit/Eccentric/pECC_1yr_time.out'))
 
     sim_par = read_parameter_fun(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__))),
                                               'resources', 'Simulation_parameters.txt'))
@@ -80,7 +80,7 @@ def test_light_propagation():
     t_ref = np.loadtxt(
         os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Circular/nCIR_1yr_time.out'))
     t_ref_ecc = np.loadtxt(
-        os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Eccentric/nEcc_1yr_time.out'))
+        os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Eccentric/nECC_1yr_time.out'))
 
     sim_par = read_parameter_fun(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__))),
                                               'resources', 'Simulation_parameters.txt'))

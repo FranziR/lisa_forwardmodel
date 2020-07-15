@@ -1,9 +1,7 @@
-
-
 import os, sys
 myPath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, myPath + '/../')
-# import numpy as np
+import numpy as np
 # import matplotlib.pyplot as plt
 
 import lisa_forwardmodel.objects.Waveforms as WF
@@ -89,7 +87,6 @@ def test_InterSCObs_y():
                 "Too strong deviation in interspacecraft Doppler Observables %s, %s" %(j,i)
             print("MAPE y %s %s: %e" %(i, j, deviation))
 
-    plt.show()
     print('INTERSPACECRAFT OBS. TEST SUCCESS')
     return 0
 
