@@ -16,7 +16,7 @@ def test_orbit():
 
     cur_path = os.path.dirname(os.path.abspath(__file__))
     t_ref = np.loadtxt(os.path.join(cur_path, 'resources/SpaceInterferometer/Orbit/Circular/pCIR_1yr_time.out'))
-    t_ref_ecc = np.loadtxt(os.path.join(cur_path, 'resources/SpaceInterferometer/Orbit/Eccentric/pECC_1yr_time.out'))
+    t_ref_ecc = np.loadtxt(os.path.join(cur_path, 'resources/SpaceInterferometer/Orbit/Eccentric/pEcc_1yr_time.out'))
 
     sim_par = read_parameter_fun(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__))),
                                               'resources', 'Simulation_parameters.txt'))
@@ -53,9 +53,9 @@ def test_orbit():
     p_ref['cir']['3'] = np.loadtxt(os.path.join(cur_path, 'resources/SpaceInterferometer/Orbit/Circular/pCIR3_1yr.out'))
 
     p_ref['ecc'] = dict()
-    p_ref['ecc']['1'] = np.loadtxt(os.path.join(cur_path, 'resources/SpaceInterferometer/Orbit/Eccentric/pECC1_1yr.out'))
-    p_ref['ecc']['2'] = np.loadtxt(os.path.join(cur_path, 'resources/SpaceInterferometer/Orbit/Eccentric/pECC2_1yr.out'))
-    p_ref['ecc']['3'] = np.loadtxt(os.path.join(cur_path, 'resources/SpaceInterferometer/Orbit/Eccentric/pECC3_1yr.out'))
+    p_ref['ecc']['1'] = np.loadtxt(os.path.join(cur_path, 'resources/SpaceInterferometer/Orbit/Eccentric/pEcc1_1yr.out'))
+    p_ref['ecc']['2'] = np.loadtxt(os.path.join(cur_path, 'resources/SpaceInterferometer/Orbit/Eccentric/pEcc2_1yr.out'))
+    p_ref['ecc']['3'] = np.loadtxt(os.path.join(cur_path, 'resources/SpaceInterferometer/Orbit/Eccentric/pEcc3_1yr.out'))
 
     dim = ['x', 'y', 'z']
     for i in list(p.keys()):
@@ -80,7 +80,7 @@ def test_light_propagation():
     t_ref = np.loadtxt(
         os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Circular/nCIR_1yr_time.out'))
     t_ref_ecc = np.loadtxt(
-        os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Eccentric/nECC_1yr_time.out'))
+        os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Eccentric/nEcc_1yr_time.out'))
 
     sim_par = read_parameter_fun(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__))),
                                               'resources', 'Simulation_parameters.txt'))
@@ -152,17 +152,17 @@ def test_light_propagation():
         os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Circular/LCIRrev3_1yr.npy'))
 
     n_ref['ecc']['1'] = np.loadtxt(
-        os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Eccentric/nECC1_1yr.out'))
+        os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Eccentric/nEcc1_1yr.out'))
     n_ref['ecc']['2'] = np.loadtxt(
-        os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Eccentric/nECC2_1yr.out'))
+        os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Eccentric/nEcc2_1yr.out'))
     n_ref['ecc']['3'] = np.loadtxt(
-        os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Eccentric/nECC3_1yr.out'))
+        os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Eccentric/nEcc3_1yr.out'))
     n_ref['ecc']['-1'] = np.loadtxt(
-        os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Eccentric/nECCrev1_1yr.out'))
+        os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Eccentric/nEccrev1_1yr.out'))
     n_ref['ecc']['-2'] = np.loadtxt(
-        os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Eccentric/nECCrev2_1yr.out'))
+        os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Eccentric/nEccrev2_1yr.out'))
     n_ref['ecc']['-3'] = np.loadtxt(
-        os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Eccentric/nECCrev3_1yr.out'))
+        os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Eccentric/nEccrev3_1yr.out'))
 
     L_ref['ecc']['1'] = np.load(
         os.path.join(cur_path, 'resources/SpaceInterferometer/LightPropagation/Eccentric/LECC1_1yr.npy'))
