@@ -1,9 +1,7 @@
-
-
 import os, sys
 myPath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, myPath + '/../')
-# import numpy as np
+import numpy as np
 # import matplotlib.pyplot as plt
 
 import lisa_forwardmodel.objects.Waveforms as WF
