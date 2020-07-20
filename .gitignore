@@ -143,3 +143,4 @@ cython_debug/
 # Further stuff
 archiv/
 .DS_Store
+*.hdf5
