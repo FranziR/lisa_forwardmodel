@@ -1,3 +1,10 @@
+'''
+Date: 20.07.2020
+Author: Franziska Riegger
+Revision Date:
+Revision Author:
+'''
+
 import inspect
 import os
 
@@ -18,15 +25,27 @@ import lisa_forwardmodel.objects.LISA as DET
 DETobjects = tuple(
     [eval('DET.' + m[0]) for m in inspect.getmembers(DET, inspect.isclass) if m[1].__module__ == DET.__name__])
 
-import lisa_forwardmodel.objects.LISA as NOI
 
-NOIobjects = tuple(
-    [eval('NOI.' + m[0]) for m in inspect.getmembers(NOI, inspect.isclass) if m[1].__module__ == NOI.__name__])
+# NOIobjects = tuple(
+#     [eval('NOI.' + m[0]) for m in inspect.getmembers(NOI, inspect.isclass) if m[1].__module__ == NOI.__name__])
 
 
 # TODO: waveform class is responsible for computing the antenna beam patterns, LISA response and TDI
 
 class InterSCDopplerObservable():
+    """
+    Class that computes the interspacecraft Doppler observables between two spacecrafts for a passing gravitational wave.
+    No noise is considered
+
+    ATTRIBUTES:
+        wave: (WaveformClass) wave object
+        detector: (SpaceInterferometer) detector object
+
+    METHODS:
+        retard:     retards the basic Doppler measurements along a given link
+        y:          computes the interspacecraft Doppler measurements for a passing gravitational wave
+    """
+
     def __init__(self,
                  detector=None,
                  wave=None):
@@ -70,6 +89,13 @@ class InterSCDopplerObservable():
             self.__detector = obj
 
     def retard(self, i=None, t=None):
+        """
+        Retards the a given time array by the light propagation duration along a certain arm.
+
+        :param i: (int) link along which to retard
+        :param t: (int/float/list/array)   time array to be retarded
+        :return: retarded time array
+        """
         ind_t, temp_t = checkInput(t, np.ndarray, (int, float, list))
         if ind_t:
             t_initial = temp_t
@@ -90,6 +116,15 @@ class InterSCDopplerObservable():
         return t_ret
 
     def y(self, t=None, s=None, r=None, retard=None):
+        """
+        Computes the interspacecraft Doppler measurements between two crafts.
+
+        :param t: (int/float/list/array)   time during which Doppler observables are to be simulated
+        :param s: (int) sending spacecraft
+        :param r: (int) receiving spacecraft
+        :param retard: (int/list) list of indices or index along which the time array has to be retarded
+        :return: interspacecraft Doppler observable y
+        """
         assert checkCraft(s), "Wrong sending spacecraft."
         assert checkCraft(r), "Wrong receiving spacecraft."
 
@@ -144,28 +179,45 @@ class InterSCDopplerObservable():
 
 
 class TDI(InterSCDopplerObservable):
+    """
+    Class TDI simulates a set of different TDI observables. Again, no noise is taken into account.
+
+    ATTRIBUTES:
+        wave: (WaveformClass) wave object
+        detector: (SpaceInterferometer) detector object
+
+    METHODS:
+        X1, X2, X3: (array) each of these compute on of the equally named unequal arm Michelson TDI observable
+        AET: (dict)         one function to compute all of the three optimal TDI observables
+    """
+
     def __init__(self,
                  detector=None,
-                 wave=None,
-                 noise=None):
+                 wave=None):
 
         super().__init__(detector,
                          wave)
 
-        self.noise = noise
+        # self.noise = noise
 
-    @property
-    def noise(self):
-        return self.__noise
-
-    @noise.setter
-    def noise(self, obj):
-        if obj is not None:
-            assert isinstance(obj, NOIobjects), \
-                "Noise object in class TDI must be one of the classes in src.objects.Noise."
-            self.__noise = obj
+    # @property
+    # def noise(self):
+    #     return self.__noise
+    #
+    # @noise.setter
+    # def noise(self, obj):
+    #     if obj is not None:
+    #         assert isinstance(obj, NOIobjects), \
+    #             "Noise object in class TDI must be one of the classes in src.objects.Noise."
+    #         self.__noise = obj
 
     def X1(self, t=None):
+        """
+        Computes unequal arm Michelson TDI observable X1.
+
+        :param t: (int/float/list/array)   time at which X1 is to be computed
+        :return: X1 during time t
+        """
         ind_t, temp_t = checkInput(t, np.ndarray, (int, float, list))
         if ind_t:
             t_initial = temp_t
@@ -194,6 +246,12 @@ class TDI(InterSCDopplerObservable):
                 - y12_32neg2 + y31_neg33 - y21_2neg2 + y12_3 - y13_neg2 + y21 - y31)
 
     def X2(self, t=None):
+        """
+        Computes unequal arm Michelson TDI observable X2.
+
+        :param t: (int/float/list/array)   time at which X2 is to be computed
+        :return: X2 during time t
+        """
         ind_t, temp_t = checkInput(t, np.ndarray, (int, float, list))
         if ind_t:
             t_initial = temp_t
@@ -227,6 +285,12 @@ class TDI(InterSCDopplerObservable):
                 + y32 - y12)
 
     def X3(self, t=None):
+        """
+        Computes unequal arm Michelson TDI observable X3.
+
+        :param t: (int/float/list/array)   time at which X3 is to be computed
+        :return: X3 during time t
+        """
         ind_t, temp_t = checkInput(t, np.ndarray, (int, float, list))
         if ind_t:
             t_initial = temp_t
@@ -259,7 +323,13 @@ class TDI(InterSCDopplerObservable):
                 + y31_2 - y32_neg1 \
                 + y13 - y23)
 
-    def AET(self, t = None):
+    def AET(self, t=None):
+        """
+        Computes optimal TDI observable A, E and T.
+
+        :param t: (int/float/list/array)   time at which X3 is to be computed
+        :return: A, E and T, stored in a dictionary
+        """
         ind_t, temp_t = checkInput(t, np.ndarray, (int, float, list))
         if ind_t:
             t_initial = temp_t
@@ -293,7 +363,7 @@ if __name__ == '__main__':
     CirLISA = DET.CircularLISA(filepath=LISA_file_path, sim=sim)
 
     GalBin_parameters = read_parameter_fun(os.path.join(os.path.join(os.path.dirname(
-        os.path.dirname(os.path.realpath(__file__)))),'input_data', 'GalBin_parameters.txt'))
+        os.path.dirname(os.path.realpath(__file__)))), 'input_data', 'GalBin_parameters.txt'))
     GalBin = WF.WaveformSimpleBinaries(parameters=GalBin_parameters, sim=sim)
 
     CirTDI = TDI(detector=CirLISA, wave=GalBin)
@@ -317,10 +387,10 @@ if __name__ == '__main__':
     for i in list(TDIObs.keys()):
         plt.figure(i)
         t_start = 0
-        t_end=-1
-        plt.subplot(3,1,1)
+        t_end = -1
+        plt.subplot(3, 1, 1)
         plt.title('Optimal TDI Observables: LISA ' + i)
-        plt.plot(sim.t[t_start:t_end], TDIObs[i]['A'], 'red', Linewidth = 1, label = 'A')
+        plt.plot(sim.t[t_start:t_end], TDIObs[i]['A'], 'red', Linewidth=1, label='A')
         plt.grid()
         plt.ylabel('A')
         plt.subplot(3, 1, 2)

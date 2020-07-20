@@ -1,8 +1,16 @@
-import os, sys
+'''
+Date: 20.07.2020
+Author: Franziska Riegger
+Revision Date:
+Revision Author:
+'''
+
+import os
+import sys
+
 myPath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, myPath + '/../')
 import numpy as np
-# import matplotlib.pyplot as plt
 
 import lisa_forwardmodel.objects.Waveforms as WF
 import lisa_forwardmodel.objects.LISA as DET
@@ -13,15 +21,25 @@ from lisa_forwardmodel.utils.test_utils import MAPE
 
 
 def test_InterSCObs_y():
+    """
+    Checks the accuracy of the basic interspacecraft Doppler observables by comparing the lisa_forwardmodel simulation
+    to the sytheticlisa results.
+    MAPE (mean absolute percentage error) is used as error measure.
+    --> verifies the InterSCDopplerObservable class implementation
+
+    :return:
+    """
     print('START INTERSPACECRAFT OBS. TEST')
+
+    # Loading reference data
     ref_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'test',
                             'resources', 'InterSCDopplerObservables')
     y_ref = dict()
     y_ref['ecc'] = dict()
-    y_ref['ecc']['123'] = np.load(os.path.join(ref_path, 'Eccentric','LISAEcc_GalBin_y123.npy'))
-    y_ref['ecc']['231'] = np.load(os.path.join(ref_path, 'Eccentric','LISAEcc_GalBin_y231.npy'))
-    y_ref['ecc']['312'] = np.load(os.path.join(ref_path, 'Eccentric','LISAEcc_GalBin_y312.npy'))
-    y_ref['ecc']['3-21'] = np.load(os.path.join(ref_path, 'Eccentric','LISAEcc_GalBin_y3neg21.npy'))
+    y_ref['ecc']['123'] = np.load(os.path.join(ref_path, 'Eccentric', 'LISAEcc_GalBin_y123.npy'))
+    y_ref['ecc']['231'] = np.load(os.path.join(ref_path, 'Eccentric', 'LISAEcc_GalBin_y231.npy'))
+    y_ref['ecc']['312'] = np.load(os.path.join(ref_path, 'Eccentric', 'LISAEcc_GalBin_y312.npy'))
+    y_ref['ecc']['3-21'] = np.load(os.path.join(ref_path, 'Eccentric', 'LISAEcc_GalBin_y3neg21.npy'))
     y_ref['ecc']['2-13'] = np.load(os.path.join(ref_path, 'Eccentric', 'LISAEcc_GalBin_y2neg13.npy'))
     y_ref['ecc']['1-32'] = np.load(os.path.join(ref_path, 'Eccentric', 'LISAEcc_GalBin_y1neg32.npy'))
 
@@ -32,9 +50,10 @@ def test_InterSCObs_y():
     y_ref['cir']['3-21'] = np.load(os.path.join(ref_path, 'Circular', 'LISACir_GalBin_y3neg21.npy'))
     y_ref['cir']['2-13'] = np.load(os.path.join(ref_path, 'Circular', 'LISACir_GalBin_y2neg13.npy'))
     y_ref['cir']['1-32'] = np.load(os.path.join(ref_path, 'Circular', 'LISACir_GalBin_y1neg32.npy'))
-    t_ref = np.load(os.path.join(ref_path, 'Circular','LISACir_GalBin_time.npy'))
+    t_ref = np.load(os.path.join(ref_path, 'Circular', 'LISACir_GalBin_time.npy'))
     t_ref_ecc = np.load(os.path.join(ref_path, 'Eccentric', 'LISAEcc_GalBin_time.npy'))
 
+    # Simulation object
     sim_par = read_parameter_fun(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__))),
                                               'resources', 'Simulation_parameters.txt'))
     const = read_parameter_fun(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__))),
@@ -51,15 +70,18 @@ def test_InterSCObs_y():
                          t_max=31557585,
                          t=t_ref_ecc)
 
+    # Detector object (circular and eccentric)
     LISA_file_path = os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__))),
                                   'resources', 'LISA_parameters.txt')
     EccLISA = DET.EccentricLISA(filepath=LISA_file_path, sim=sim_ecc)
     CirLISA = DET.CircularLISA(filepath=LISA_file_path, sim=sim)
 
+    # Wave object (galactic binary)
     GalBin_parameters = read_parameter_fun(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__))),
                                                         'resources', 'GalBin_parameters.txt'))
     GalBin = WF.WaveformSimpleBinaries(parameters=GalBin_parameters, sim=sim)
 
+    # Interspacecraft observable objects (all six measurements)
     CirDoppler = InterSCDopplerObservable(detector=CirLISA, wave=GalBin)
     EccDoppler = InterSCDopplerObservable(detector=EccLISA, wave=GalBin)
 
@@ -80,18 +102,30 @@ def test_InterSCObs_y():
     y['ecc']['2-13'] = EccDoppler.y(s=2, r=3)
     y['ecc']['1-32'] = EccDoppler.y(s=1, r=2)
 
+    # Asserting accuracy
     for i in list(y.keys()):
         for j in list(y[i].keys()):
             deviation = MAPE(y_ref[i][j], y[i][j])
             assert deviation < 1e-4, \
-                "Too strong deviation in interspacecraft Doppler Observables %s, %s" %(j,i)
-            print("MAPE y %s %s: %e" %(i, j, deviation))
+                "Too strong deviation in interspacecraft Doppler Observables %s, %s" % (j, i)
+            print("MAPE y %s %s: %e" % (i, j, deviation))
 
     print('INTERSPACECRAFT OBS. TEST SUCCESS')
     return 0
 
+
 def test_InterSCObs_retard():
+    """
+    Checks the accuracy of the temporal retardation of the Doppler observables by comparing the lisa_forwardmodel
+    simulation to the sytheticlisa results.
+    MAPE (mean absolute percentage error) is used as error measure.
+    --> verifies the retardation method of InterSCDopplerObservable class implementation
+
+    :return:
+    """
     print('START RETARDATION TEST')
+
+    # Loading reference data
     ref_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'test', 'resources', 'TDI')
 
     y_ref = dict()
@@ -101,8 +135,10 @@ def test_InterSCObs_retard():
     y_ref['cir']['y21_2neg2'] = np.load(os.path.join(ref_path, 'Circular', 'LISACir_GalBin_y21_2neg2.npy'))
     y_ref['cir']['y12_32neg2'] = np.load(os.path.join(ref_path, 'Circular', 'LISACir_GalBin_y12_32neg2.npy'))
     y_ref['cir']['y21_neg332neg2'] = np.load(os.path.join(ref_path, 'Circular', 'LISACir_GalBin_y21_neg332neg2.npy'))
-    y_ref['cir']['y31_neg33neg332neg2'] = np.load(os.path.join(ref_path, 'Circular', 'LISACir_GalBin_y31_neg33neg332neg2.npy'))
-    y_ref['cir']['y13_neg2neg33neg332neg2'] = np.load(os.path.join(ref_path, 'Circular', 'LISACir_GalBin_y13_neg2neg33neg332neg2.npy'))
+    y_ref['cir']['y31_neg33neg332neg2'] = np.load(
+        os.path.join(ref_path, 'Circular', 'LISACir_GalBin_y31_neg33neg332neg2.npy'))
+    y_ref['cir']['y13_neg2neg33neg332neg2'] = np.load(
+        os.path.join(ref_path, 'Circular', 'LISACir_GalBin_y13_neg2neg33neg332neg2.npy'))
     y_ref['cir']['y21'] = np.load(os.path.join(ref_path, 'Circular', 'LISACir_GalBin_y21.npy'))
     y_ref['cir']['y12_3'] = np.load(os.path.join(ref_path, 'Circular', 'LISACir_GalBin_y12_3.npy'))
     y_ref['cir']['y31_neg33'] = np.load(os.path.join(ref_path, 'Circular', 'LISACir_GalBin_y31_neg33.npy'))
@@ -113,7 +149,7 @@ def test_InterSCObs_retard():
     y_ref['cir']['y21_2neg22neg2neg33'] = np.load(os.path.join(ref_path, 'Circular',
                                                                'LISACir_GalBin_y21_2neg22neg2neg33.npy'))
     y_ref['cir']['y12_32neg22neg2neg33'] = np.load(os.path.join(ref_path, 'Circular',
-                                                               'LISACir_GalBin_y12_32neg22neg2neg33.npy'))
+                                                                'LISACir_GalBin_y12_32neg22neg2neg33.npy'))
 
     y_ref['ecc'] = dict()
     y_ref['ecc']['y31'] = np.load(os.path.join(ref_path, 'Eccentric', 'LISAEcc_GalBin_y31.npy'))
@@ -137,8 +173,9 @@ def test_InterSCObs_retard():
     y_ref['ecc']['y21_2neg22neg2neg33'] = np.load(os.path.join(ref_path, 'Eccentric',
                                                                'LISAEcc_GalBin_y21_2neg22neg2neg33.npy'))
 
-    t_ref = np.load(os.path.join(ref_path, 'Eccentric','LISAEcc_GalBin_time.npy'))
+    t_ref = np.load(os.path.join(ref_path, 'Eccentric', 'LISAEcc_GalBin_time.npy'))
 
+    # Simulation object
     sim_par = read_parameter_fun(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__))),
                                               'resources', 'Simulation_parameters.txt'))
     const = read_parameter_fun(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__))),
@@ -149,20 +186,24 @@ def test_InterSCObs_retard():
                      t_max=31557585,
                      t=t_ref)
 
-    sim = Simulation(t = t_ref)
+    sim = Simulation(t=t_ref)
 
+    # Detector object (circular and eccentric)
     LISA_file_path = os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__))),
                                   'resources', 'LISA_parameters.txt')
     EccLISA = DET.EccentricLISA(filepath=LISA_file_path, sim=sim)
     CirLISA = DET.CircularLISA(filepath=LISA_file_path, sim=sim)
 
+    # Wave object
     GalBin_parameters = read_parameter_fun(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__))),
                                                         'resources', 'GalBin_parameters.txt'))
     GalBin = WF.WaveformSimpleBinaries(parameters=GalBin_parameters, sim=sim)
 
+    # Basic Doppler measurements ...
     CirDoppler = InterSCDopplerObservable(detector=CirLISA, wave=GalBin)
     EccDoppler = InterSCDopplerObservable(detector=EccLISA, wave=GalBin)
 
+    # ... and their retardation
     y = dict()
     y['cir'] = dict()
     y['cir']['y31'] = CirDoppler.y(t=t_ref, s=3, r=1)
@@ -176,7 +217,7 @@ def test_InterSCObs_retard():
     y['cir']['y12_3'] = CirDoppler.y(t=t_ref, s=1, r=2, retard=3)
     y['cir']['y12_32neg22neg2neg33'] = CirDoppler.y(t=t_ref, s=1, r=2, retard=[3, 2, -2, 2, -2, -3, 3])
     y['cir']['y31_neg33'] = CirDoppler.y(t=t_ref, s=3, r=1, retard=[-3, 3])
-    y['cir']['y13_neg2neg33'] = CirDoppler.y(t=t_ref, s=1,  r=3, retard=[-2, -3, 3])
+    y['cir']['y13_neg2neg33'] = CirDoppler.y(t=t_ref, s=1, r=3, retard=[-2, -3, 3])
     y['cir']['y31_2neg2neg33'] = CirDoppler.y(t=t_ref, s=3, r=1, retard=[2, -2, -3, 3])
     y['cir']['y13_neg22neg2neg33'] = CirDoppler.y(t=t_ref, s=1, r=3, retard=[-2, 2, -2, -3, 3])
     y['cir']['y21_2neg22neg2neg33'] = CirDoppler.y(t=t_ref, s=2, r=1, retard=[2, -2, 2, -2, -3, 3])
@@ -198,6 +239,7 @@ def test_InterSCObs_retard():
     y['ecc']['y13_neg22neg2neg33'] = EccDoppler.y(t=t_ref, s=1, r=3, retard=[-2, 2, -2, -3, 3])
     y['ecc']['y21_2neg22neg2neg33'] = EccDoppler.y(t=t_ref, s=2, r=1, retard=[2, -2, 2, -2, -3, 3])
 
+    # Asserting accuracy
     for i in list(y.keys()):
         for j in list(y[i].keys()):
             deviation = MAPE(y_ref[i][j], y[i][j])
@@ -208,13 +250,24 @@ def test_InterSCObs_retard():
     print('RETARDATION TEST SUCCESS')
     return 0
 
+
 def test_TDI_X():
+    """
+    Checks the accuracy of the unequal arms Michelson TDI observables by comparing the lisa_forwardmodel simulation
+    to the sytheticlisa results.
+    MAPE (mean absolute percentage error) is used as error measure.
+    --> verifies the TDI class implementation
+
+    :return:
+    """
     print('START X TEST')
+
+    # Loading reference data
     ref_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'test', 'resources', 'TDI')
 
     X_ref = dict()
     X_ref['cir'] = dict()
-    X_ref['cir']['1'] = np.load(os.path.join(ref_path, 'Circular','LISACir_GalBin_X1.npy'))
+    X_ref['cir']['1'] = np.load(os.path.join(ref_path, 'Circular', 'LISACir_GalBin_X1.npy'))
     X_ref['cir']['2'] = np.load(os.path.join(ref_path, 'Circular', 'LISACir_GalBin_X2.npy'))
     X_ref['cir']['3'] = np.load(os.path.join(ref_path, 'Circular', 'LISACir_GalBin_X3.npy'))
 
@@ -223,8 +276,9 @@ def test_TDI_X():
     X_ref['ecc']['2'] = np.load(os.path.join(ref_path, 'Eccentric', 'LISAEcc_GalBin_X2.npy'))
     X_ref['ecc']['3'] = np.load(os.path.join(ref_path, 'Eccentric', 'LISAEcc_GalBin_X3.npy'))
 
-    t_ref = np.load(os.path.join(ref_path, 'Circular','LISACir_GalBin_time.npy'))
+    t_ref = np.load(os.path.join(ref_path, 'Circular', 'LISACir_GalBin_time.npy'))
 
+    # Simulation object
     sim_par = read_parameter_fun(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__))),
                                               'resources', 'Simulation_parameters.txt'))
     const = read_parameter_fun(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__))),
@@ -235,20 +289,24 @@ def test_TDI_X():
                      t_max=31557585,
                      t=t_ref)
 
-    sim = Simulation(t = t_ref)
+    sim = Simulation(t=t_ref)
 
+    # Detector object (circular and eccentric)
     LISA_file_path = os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__))),
                                   'resources', 'LISA_parameters.txt')
     EccLISA = DET.EccentricLISA(filepath=LISA_file_path, sim=sim)
     CirLISA = DET.CircularLISA(filepath=LISA_file_path, sim=sim)
 
+    # Wave object (galactic binary)
     GalBin_parameters = read_parameter_fun(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__))),
                                                         'resources', 'GalBin_parameters.txt'))
     GalBin = WF.WaveformSimpleBinaries(parameters=GalBin_parameters, sim=sim)
 
+    # TDI object
     CirTDI = TDI(detector=CirLISA, wave=GalBin)
     EccTDI = TDI(detector=EccLISA, wave=GalBin)
 
+    # Computing unequal arm Michelson TDI observables
     X = dict()
     X['cir'] = dict()
     X['cir']['1'] = CirTDI.X1()
@@ -260,6 +318,7 @@ def test_TDI_X():
     X['ecc']['2'] = EccTDI.X2()
     X['ecc']['3'] = EccTDI.X3()
 
+    # Asserting accuracy
     for i in list(X.keys()):
         for j in list(X[i].keys()):
             deviation = MAPE(X_ref[i][j], X[i][j])
@@ -270,7 +329,8 @@ def test_TDI_X():
     print('RETARDATION TEST SUCCESS')
     return 0
 
+
 if __name__ == '__main__':
-    # test_InterSCObs_y()
-    # test_InterSCObs_retard()
+    test_InterSCObs_y()
+    test_InterSCObs_retard()
     test_TDI_X()

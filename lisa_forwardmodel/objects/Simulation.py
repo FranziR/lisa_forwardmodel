@@ -1,3 +1,10 @@
+'''
+Date: 20.07.2020
+Author: Franziska Riegger
+Revision Date:
+Revision Author:
+'''
+
 import sys
 import os
 from typing import Any, Union
@@ -6,12 +13,31 @@ from lisa_forwardmodel.utils.checkInput import checkInput
 
 import numpy as np
 
+
 def NoneAssertion(value, err):
+    """
+    Checks whether input item value is None or not.
+
+    :param value: check, whether this item is None
+    :param err: through error if value is None
+    """
     assert value is not None, err
 
+
 class Simulation():
+    """
+    Class that sets the temporal information for the simulation.
+
+    ATTRIBUTES:
+        constant: (dict)                dictionary with (mostly astrophysical) constants.
+        simulation_parameters: (dict)   dictionary with simulation parameters
+        t_min: (float)                  start of simulation in sec
+        t_max: (float)                  end of simulation in sec, t_min < t_max
+        t_res: (int)                    temporal resolution (step size)
+        t: (array)                      time interval from t_min to t_max, increasing in steps of size t_res
+    """
     def __init__(self,
-                 constant = None,
+                 constant=None,
                  simulation_parameters=None,
                  t_min=None,
                  t_max=None,
@@ -140,8 +166,9 @@ class Simulation():
                 and self.t_res == other.t_res
                 and np.array_equal(self.t, other.t))
 
+
 if __name__ == '__main__':
-    sim = Simulation(t_res = 150)
+    sim = Simulation(t_res=150)
     constants = sim.constant
     t = sim.t
     t_res = sim.t_res
