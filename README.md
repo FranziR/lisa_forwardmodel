@@ -43,7 +43,8 @@ All input parameters and their default settings can be inspected by
 
 ````python lisa_forwardmodel/example/example_GalBin_EccLISA.py --help````.
 
-An ```.hdf5``` file with the generated simulation ata is automatically stored in ``\results``.
+An ```.hdf5``` file with the generated simulation data is automatically stored in ``\results``.
+
 A more detailed description of the available objects will be given in ```docs```. 
 
 #### Testing
