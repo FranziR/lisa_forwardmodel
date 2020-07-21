@@ -39,8 +39,11 @@ Again, here it is recommended to create a virtual environment (see [here](https:
 Generally, the code implements objects for the detector, the wave and the measurements. 
 A simple application of these is given with the example code ``examples/example_GalBin_EccLISA.py``.
 It intends to simulate the LISA orbits, a gravitational wave source, LISA's response to these waves as well as interspacecraft Doppler measurments and time-delayed linear combinations of these, the so-called TDI observables.
-All input parameters and their default settings can be inspected by 
+All input parameters and their default settings can be inspected by
+
 ````python lisa_forwardmodel/example/example_GalBin_EccLISA.py --help````.
+
+An ```.hdf5``` file with the generated simulation ata is automatically stored in ``\results``.
 A more detailed description of the available objects will be given in ```docs```. 
 
 #### Testing
