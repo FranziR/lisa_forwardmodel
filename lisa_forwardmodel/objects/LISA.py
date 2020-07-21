@@ -1,9 +1,9 @@
-################### LISA MOTION ###################
-## In this script, all LISA related quantities are
-## computed. These include the position of LISA but
-## also the antenna beam patterns F_+ and F_x which
-## represent the amplitude modulations of the GW
-## response due to LISA motion.
+'''
+Date: 20.07.2020
+Author: Franziska Riegger
+Revision Date:
+Revision Author:
+'''
 
 import abc
 import os
@@ -15,7 +15,6 @@ import numpy as np
 from lisa_forwardmodel.objects.Simulation import Simulation
 from lisa_forwardmodel.utils.LISAutils import checkLink
 from lisa_forwardmodel.utils.checkInput import checkInput
-# sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'utils'))
 from lisa_forwardmodel.utils.readParameters import read_parameter_fun
 from lisa_forwardmodel.utils.utils import get_Euler
 
@@ -95,27 +94,28 @@ class SpaceInterferometer(abc.ABC):
     def L_light(self):
         pass
 
-
 class EccentricLISA(SpaceInterferometer):
-    """A LISA spacecraft class.
+    """A LISA class with eccentric orbits.
 
     ATTRIBUTES:
-        sigma   (3D fl array):   angular position of spacecrafts
-        p       (3D fl array):   position of each spacecraft
-        n       (3D fl array):   unit normal vectors describing laser beam orientation
-        L       (3D fl array):   LISA arm length
+        L       (array):        LISA arm lengths in sec
+        omega (float):          rotation velocity of LISA guiding centre around Sun in rad/sec
+        eta_zero (float):       initial position of rotation of LISA guiding centre around Sun in rad
+        xi_zero (float):        initial position of rotation of spacecrafts around LISA guiding centre in rad
+        ec (array):             eccentricity of orbits
 
     METHODS:
-
-
-    INPUTS:
-        parameters  (dict):     ready to use dictionary with all parameters
-        filepath    (str):      alternative to parameters; text file to read in that includes all parameters
-
-        sigma (3D fl array): predefined attribute
-        n (3D fl array):     predefined attribute
-        p (3D fl array):     predefined attribute
-        L (3D fl array):     predefined attribute"""
+        sigma (float):          computes initial angular position of spacecrafts wrt LISA guiding centre
+        alpha (array):          computes angular position of LISA guiding centre wrt Sun in rad at time t
+        beta (array):           angular anomaly of spacecraft over time
+        get_ploc (array):       returns spacecraft position in local LISA frame (position wrt to LISA barycenter) in sec
+        get_p (array):          returns spacecraft position in SSB frame in sec
+        get_constellation (list): returns possible combinations of sending and receiving crafts with transmitting
+                                arm index for Doppler measurement
+        get_n (array):          computes light propagation direction (normal unit vectors of LISA arms)
+        L_light (array):        gives the evolution of the light propagation time between two crafts
+                                (due to direction of propagation: co- and counterclockwise)
+    """
 
     def __init__(self,
                  parameters=None,
@@ -127,7 +127,19 @@ class EccentricLISA(SpaceInterferometer):
                  ec=None,
                  sim=None,
                  swap=None):
+        """
+        Initialises EccentricLISA class.
 
+        :param parameters: (dict) LISA simulation parameters
+        :param filepath: (str) path from where to read in .txt file that contains LISA parameters
+        :param L: (array) LISA armlengths in sec
+        :param omega: (float) angular velocity of LISA guiding center rotation around SUN
+        :param eta_zero: (float) initial position of LISA
+        :param xi_zero: (float) initial position of LISA
+        :param ec: (array) eccentricity of LISA spacecraft orbits
+        :param sim: (simulation object) simulation object that contains temporal information
+        :param swap:
+        """
         super().__init__(parameters,
                          filepath,
                          sim)
@@ -170,13 +182,6 @@ class EccentricLISA(SpaceInterferometer):
             except KeyError:
                 self.__L = np.array(self.parameters['L']) / self.sim.constant['c']
         assert len(self.__L) == 3, "3D array must be given for the LISA arm length."
-        # self.__L = np.zeros((3,))
-        # self.__L[0] = __L[0]
-        # if self.swap:
-        #     self.__L[2] = __L[1]
-        #     self.__L[1] = __L[2]
-        # else:
-        #     self.__L = __L
 
     @property
     def omega(self):
@@ -258,9 +263,11 @@ class EccentricLISA(SpaceInterferometer):
 
     def alpha(self, t=None):
         """
+        Computes rotational motion of LISA constellation.
 
-        :param t:
+        :param t: (int/float/list/array)   time at which alpha is to be computed
         :return:
+            alpha (array):  temporal evolution of angular position of LISA
         """
         if (self.omega, self.eta_zero) is not None:
             ind, t_temp = checkInput(t, np.ndarray, (list, tuple, int, float))
@@ -271,9 +278,10 @@ class EccentricLISA(SpaceInterferometer):
 
     def beta(self):
         """
+        Computes angular anomaly of each spacecraft.
 
-        :param t:
         :return:
+            beta: (array)
         """
         beta_temp = np.zeros((3,))
         sigma_temp = self.sigma()
@@ -284,6 +292,15 @@ class EccentricLISA(SpaceInterferometer):
         return beta_temp
 
     def get_ploc(self, t=None, approx=2):
+        """
+        Computes spacecraft positions in local frame (wrt LISA guiding center).
+
+        :param t: (int/float/list/array)    time at which p_loc is to be computed
+        :param approx: (int)                gives order of accuracy of approximation of orbits
+                                            (can only take values 1 and 2)
+        :return:
+            p_loc: (dict)   dictionary with temporal evolution of position
+        """
         ind, t_l = checkInput(t, np.ndarray, (list, tuple, int, float))
         if not ind:
             t_l = self.sim.t
@@ -334,9 +351,11 @@ class EccentricLISA(SpaceInterferometer):
 
     def get_p(self, t=None, approx=2):
         """
+        Computes orbits of spacecrafts in SSB frame.
 
-        :param t:
-        :type set: object
+        :param t: (int/float/list/array)   time at which p is to be computed
+        :returns:
+            p: (dict)   dictionary with orbits of each craft
         """
         assert (approx == 1 or approx == 2), \
             "Approximation accuracy can only be of order 1 (approx = 1) or 2 (approx = 2)."
@@ -360,6 +379,10 @@ class EccentricLISA(SpaceInterferometer):
         return p
 
     def get_constellation(self, swap=None):
+        """
+        Returns tuple with triples of sending/receiving crafts and transmitting link.
+        :return:
+        """
         ind_sw, temp = checkInput(swap, bool, (str, int))
         if ind_sw:
             sw = temp
@@ -373,10 +396,11 @@ class EccentricLISA(SpaceInterferometer):
 
     def get_n(self, t=None):
         """
+        Computes the light propagation direction (unit normal vector of LISA arms).
 
-        :param t:
+        :param t: (int/float/list/array)   time at which n is to be computed
         :return:
-        :type set: object
+            n: (dict)   dictionary with unit normal vector
         """
         ind, t_l = checkInput(t, np.ndarray, (list, tuple, int, float))
         if not ind:
@@ -405,6 +429,15 @@ class EccentricLISA(SpaceInterferometer):
         return n
 
     def L_light(self, t=None, link=None, accurate=True):
+        """
+        Computes the light propagation times between two crafts.
+
+        :param t: (int/float/list/array)   time at which L_light is to be computed
+        :param link: (int)  link along which propagation time is to be computed
+        :param accurate: (bool) indicator whether accurate comutation (accrate = True) is used or not (accurate = false)
+        :return:
+            L_light: (dict) dictionary with light propagation times
+        """
         ind, t_l = checkInput(t, np.ndarray, (list, tuple, int, float))
         if not ind:
             t_l = self.sim.t
@@ -448,37 +481,33 @@ class EccentricLISA(SpaceInterferometer):
                     + (np.sign(l) * self.omega * self.parameters['Rsec'] * self.L[np.abs(l) - 1]
                          - 15 / 32 * self.ec[np.abs(l) - 1] * self.L[np.abs(l) - 1]) \
                     * np.sin(self.omega * t_l - delta[np.abs(l) - 1])
-                # else:
-                #     L_t = self.L[np.abs(l) - 1] - \
-                #           1 / 32 * self.ec[np.abs(l) - 1] * self.L[np.abs(l) - 1] \
-                #           * np.sin(3 * self.omega * t_l - 3 * self.xi_zero) \
-                #           + (np.sign(l) * self.omega * self.parameters['Rsec'] * self.L[np.abs(l) - 1]
-                #              - 15 / 32 * self.ec[np.abs(l) - 1] * self.L[np.abs(l) - 1]) \
-                #           * np.sin(self.omega * t_l - delta[np.abs(l) - 1])
                 L_lightprog[str(l)] = L_t
             return L_lightprog
 
 
 class CircularLISA(SpaceInterferometer):
-    """A LISA spacecraft class. Based on paper of krolak. Circulasr orbits.
+    """A LISA class with circular orbits. Based on paper of Krolak et al.
 
     ATTRIBUTES:
-        sigma   (3D fl array):   angular position of spacecrafts
-        p       (3D fl array):   position of each spacecraft
-        n       (3D fl array):   unit normal vectors describing laser beam orientation
-        L       (3D fl array):   LISA arm length
+        zeta    (float):        initial inclination of the LISA plane wrt ecliptic
+        L       (array):        LISA arm lengths in sec
+        omega_eta (float):      rotation velocity of LISA guiding centre around Sun in rad/sec
+        omega_xi (float):       rotation velocity of spacecrafts around LISA guiding centre in rad/sec
+        eta_zero (float):       initial position of rotation of LISA guiding centre around Sun in rad
+        xi_zero (float):        initial position of rotation of spacecrafts around LISA guiding centre in rad
 
     METHODS:
-
-
-    INPUTS:
-        parameters  (dict):     ready to use dictionary with all parameters
-        filepath    (str):      alternative to parameters; text file to read in that includes all parameters
-
-        sigma (3D fl array): predefined attribute
-        n (3D fl array):     predefined attribute
-        p (3D fl array):     predefined attribute
-        L (3D fl array):     predefined attribute"""
+        sigma (float):          computes initial angular position of spacecrafts wrt LISA guiding centre
+        eta (array):            computes angular position of LISA guiding centre wrt Sun in rad at time t
+        xi (array):             computes angular position of spacecrafts wrt LISA guiding centre in rad at time t
+        get_ploc (array):       returns spacecraft position in local LISA frame (position wrt to LISA barycenter) in sec
+        get_p (array):          returns spacecraft position in SSB frame in sec
+        get_constellation (list): returns possible combinations of sending and receiving crafts with transmitting
+                                arm index for Doppler measurement
+        get_n (array):          computes light propagation direction (normal unit vectors of LISA arms)
+        L_light (array):        gives the evolution of the light propagation time between two crafts
+                                (due to direction of propagation: co- and counterclockwise)
+    """
 
     def __init__(self,
                  parameters=None,
@@ -490,7 +519,18 @@ class CircularLISA(SpaceInterferometer):
                  xi_zero=None,
                  swap=None,
                  sim=None):
-
+        """
+        Initialises CircularLISA class.
+        :param parameters: (dict) LISA simulation parameters
+        :param filepath: (str) path from where to read in .txt file that contains LISA parameters
+        :param L: (array) LISA armlengths in sec
+        :param omega: (float) angular velocity of LISA guiding center rotation around SUN
+        :param eta_zero: (float) initial position of LISA
+        :param xi_zero: (float) initial position of LISA
+        :param zeta: (float) inclination of LISA wrt ecliptic
+        :param swap:
+        :param sim: (Simulation object) contains all information about tempora simualtion
+        """
         super().__init__(parameters,
                          filepath,
                          sim)
@@ -630,9 +670,11 @@ class CircularLISA(SpaceInterferometer):
 
     def eta(self, t=None):
         """
+        Computes angular position of LISA guiding centre wrt Sun in rad at time t.
 
-        :param t:
+        :param t: (int/float/list/array)   time at which eta is to be computed
         :return:
+            eta (array):    array (of length len(t)) that contains eta at given times t
         """
         if (self.omega_eta, self.eta_zero) is not None:
             ind, t_temp = checkInput(t, np.ndarray, (list, tuple, int, float))
@@ -643,9 +685,11 @@ class CircularLISA(SpaceInterferometer):
 
     def xi(self, t=None):
         """
+        Computes angular position of spacecrafts wrt LISA guiding centre in rad at time t.
 
-        :param t:
+        :param t: (int/float/list/array)   time at which eta is to be computed
         :return:
+            xi (array): array (of length len(t)) that contains xi at given times t
         """
         if (self.omega_xi, self.xi_zero) is not None:
             ind, t_temp = checkInput(t, np.ndarray, (list, tuple, int, float))
@@ -655,18 +699,18 @@ class CircularLISA(SpaceInterferometer):
                 return self.omega_xi * self.sim.t + self.xi_zero
 
     def get_ploc(self, t=None):
+        """
+        Computes spacecraft positions in local frame (wrt LISA guiding center).
+
+        :param t: (int/float/list/array)   time at which p_loc is to be computed
+        :return:
+            p_loc: (dict)   dictionary with temporal evolution of position
+        """
         ind_t, t_l = checkInput(t, np.ndarray, (list, tuple, int, float))
         if not ind_t:
             t_l = self.sim.t
 
-        # ind_sw, temp = checkInput(swap, bool)
-        # if ind_sw:
-        #     sw = temp
-        # else:
-        #     sw = self.swap
-
         p_loc = dict()
-        # p_temp = dict()
         try:
             dim_t = len(t_l)
         except TypeError:
@@ -682,19 +726,13 @@ class CircularLISA(SpaceInterferometer):
 
             p_loc[str(i + 1)] = np.matmul(get_Euler(self.eta(t_l), self.xi(t_l), self.zeta),
                                           p_loc[str(i + 1)])
-            # p_loc[str(i+1)][0, :] = self.L[i] / np.sqrt(3) \
-            #                                 * (-np.sin(self.eta(t_l)) * np.cos(2 * sig[i] - self.xi(t_l)) \
-            #                                   + np.cos(self.eta(t_l)) * np.sin(self.zeta) \
-            #                                   * np.sin(self.xi(t_l) - 2 * sig[i]))
-            # p_loc[str(i+1)][1, :] = self.L[i] / np.sqrt(3) \
-            #                                * (np.cos(self.eta(t_l)) * np.cos(self.xi(t_l) - 2 * sig[i]) \
-            #                                   + np.sin(self.eta(t_l)) * np.sin(self.zeta) \
-            #                                   * np.sin(self.xi(t_l) - 2 * sig[i]))
-            # p_loc[str(i+1)][2, :] = self.L[i] / np.sqrt(3) * np.cos(self.zeta) \
-            #                                * np.sin(2 * sig[i] - self.xi(t_l))
         return p_loc
 
     def get_constellation(self, swap=None):
+        """
+        Returns tuple with triples of sending/receiving crafts and transmitting link.
+        :return:
+        """
         ind_sw, temp = checkInput(swap, bool, (str, int))
         if ind_sw:
             sw = temp
@@ -707,9 +745,11 @@ class CircularLISA(SpaceInterferometer):
 
     def get_p(self, t=None):
         """
+        Computes orbits of spacecrafts in SSB frame.
 
-        :param t:
-        :type set: object
+        :param t: (int/float/list/array)   time at which p is to be computed
+        :returns:
+            p: (dict)   dictionary with orbits of each craft
         """
         ind_t, t_l = checkInput(t, np.ndarray, (list, tuple, int, float))
         if not ind_t:
@@ -732,10 +772,11 @@ class CircularLISA(SpaceInterferometer):
 
     def get_n(self, t=None):
         """
+        Computes the light propagation direction (unit normal vector of LISA arms).
 
-        :param t:
+        :param t: (int/float/list/array)   time at which n is to be computed
         :return:
-        :type set: object
+            n: (dict)   dictionary with unit normal vector
         """
         ind_t, t_l = checkInput(t, np.ndarray, (list, tuple, int, float))
         if not ind_t:
@@ -765,6 +806,15 @@ class CircularLISA(SpaceInterferometer):
         return n
 
     def L_light(self, t=None, link=None, accurate=True):
+        """
+        Computes the light propagation times between two crafts.
+
+        :param t: (int/float/list/array)   time at which L_light is to be computed
+        :param link: (int)  link along which propagation time is to be computed
+        :param accurate: (bool) indicator whether accurate comutation (accrate = True) is used or not (accurate = false)
+        :return:
+            L_light: (dict) dictionary with light propagation times
+        """
         ind, t_l = checkInput(t, np.ndarray, (list, tuple, int, float))
         if not ind:
             t_l = self.sim.t
@@ -800,16 +850,10 @@ class CircularLISA(SpaceInterferometer):
             for i in range(0, len(slr)):
                 l = slr[i][1]
                 L_lightprog[str(l)] = np.zeros((dim_t,))
-                # if l > 0:
                 L_lightprog[str(l)] = self.L[np.abs(l) - 1] + np.sign(l) \
                                       * self.omega_eta * self.parameters['Rsec'] \
                                       * self.L[np.abs(l) - 1] \
                                       * np.sin(self.omega_eta * t_l - delta[np.abs(l) - 1])
-                # else:
-                #     L_lightprog[str(l)] = self.L[np.abs(l) - 1] - np.sign(l) \
-                #                           * self.omega_eta * self.parameters['Rsec'] \
-                #                           * self.L[np.abs(l) - 1] \
-                #                           * np.sin(self.omega_eta * t_l - delta[np.abs(l) - 1])
             return L_lightprog
 
 
@@ -820,29 +864,29 @@ if __name__ == '__main__':
                                  'LISA_parameters.txt')
     LISA_parameters = read_parameter_fun(LISA_filepath)
     LISA = CircularLISA(filepath=LISA_filepath, sim=sim)
-    p_trail = LISA.get_p()
+    # p_trail = LISA.get_p()
     # L_light = LISA.L_light(link = 1)/sim.constant['c']
     # t_sim = LISA.sim.t
 
-    LISAEcc = EccentricLISA(filepath=LISA_filepath, sim=sim)
-    b = LISAEcc.beta()
-    p2 = LISAEcc.get_p()['2'] / sim.constant['c']
-    L = LISAEcc.L
-    L_light = LISAEcc.L_light(link=1)['1']
-
-    ref_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'test',
-                            'Orbit_SytheticLISA')
-    L_light_ref = np.loadtxt(os.path.join(ref_path, 'LISAEcc_L.out'))
-
-    fig1 = plt.figure(1)
-    plt.plot(LISAEcc.sim.t, L_light, 'blue', label='LISA Franzi')
-    plt.plot(LISAEcc.sim.t, L_light, 'black', Linestyle=':', label='LISA Ref')
-    plt.grid()
-    plt.xlabel('time in sec')
-    plt.ylabel('light travel time (l_32)')
-    plt.title('Light travel time from spacecraft 3 to 2 (link 1)')
-    plt.legend()
-    plt.show()
+    # LISAEcc = EccentricLISA(filepath=LISA_filepath, sim=sim)
+    # b = LISAEcc.beta()
+    # p2 = LISAEcc.get_p()['2'] / sim.constant['c']
+    # L = LISAEcc.L
+    # L_light = LISAEcc.L_light(link=1)['1']
+    #
+    # ref_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'test',
+    #                         'Orbit_SytheticLISA')
+    # L_light_ref = np.loadtxt(os.path.join(ref_path, 'LISAEcc_L.out'))
+    #
+    # fig1 = plt.figure(1)
+    # plt.plot(LISAEcc.sim.t, L_light, 'blue', label='LISA Franzi')
+    # plt.plot(LISAEcc.sim.t, L_light, 'black', Linestyle=':', label='LISA Ref')
+    # plt.grid()
+    # plt.xlabel('time in sec')
+    # plt.ylabel('light travel time (l_32)')
+    # plt.title('Light travel time from spacecraft 3 to 2 (link 1)')
+    # plt.legend()
+    # plt.show()
 
     print('Finish')
     # fig1 = plt.figure(1)

@@ -1,3 +1,10 @@
+'''
+Date: 20.07.2020
+Author: Franziska Riegger
+Revision Date:
+Revision Author:
+'''
+
 import os
 import sys
 from math import pi as pi
@@ -8,8 +15,8 @@ from numpy import cos as cos
 from numpy import sin as sin
 
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'utils'))
-from src.utils.readParameters import read_parameter_fun
-from src.objects.Simulation import Simulation
+from lisa_forwardmodel.utils.readParameters import read_parameter_fun
+from lisa_forwardmodel.objects.Simulation import Simulation
 
 
 class WaveformClass:
@@ -752,6 +759,24 @@ class WaveformSimpleBinaries(WaveformClass):
                  amplitude=None,
                  frequency=None,
                  frequency_dot=None):
+        """
+        Initialises the WaveformSimpleBinaries class.
+
+        :param parameters: (dict)   contains all waveform model parameters
+        :param filepath: (str) path to .txt file in which waveform model parameters are stored
+        :param source: (str) source of gravitational wave (here: Galactic Binary)
+        :param sim: (Simulation obj) simulation object that contains all temporal information
+        :param long: (float) longitude of source in rad (ecliptic position)
+        :param lat: (float) latitude of source in rad (ecliptic position)
+        :param psi: (float) polarization angle in rad
+        :param iota: (float) initial inclination of GW plane wrt LISA in rad
+        :param d_l: (float) luminosity distance in parsec
+        :param z: (float) redshift
+        :param phi_0: (float) initial phase of gravitational wave in rad
+        :param amplitude: (float) amplitude of gravitational wave
+        :param frequency: (float) frequency of gravitational wave in rad/sec
+        :param frequency_dot: (float) acceleration of frequency in rad/sec**2
+        """
         super().__init__(parameters,
                          filepath,
                          source,
@@ -918,7 +943,12 @@ class WaveformSimpleBinaries(WaveformClass):
               f_dot=None,
               phi_init=None):
         """
-
+        Computes the phase of the gravitational wave.
+        :param t: (int/float/list/array)   time at which phase is to be computed
+        :param f: (float) frequency
+        :param f_dot: (float) frequency acceleration
+        :param phi_init: (float) initial phase
+        :return: temporal evolution of phase
         """
         if t is not None:
             if isinstance(t, np.ndarray):
@@ -947,6 +977,12 @@ class WaveformSimpleBinaries(WaveformClass):
         return 2 * pi * (f_temp * t_temp + 0.5 * f_dot_temp * t_temp ** 2) + phi_0_temp
 
     def h_0_plus_cross(self, t=None):
+        """
+        Copmutes the amplitudes of the plus and cross polarization components.
+
+        :param t: (int/float/list/array)   time during which polarization amplitudes are to be computed
+        :return: dictionary with amplitudes of cross and plus polarizations
+        """
         if t is not None:
             if isinstance(t, np.ndarray):
                 t_temp = t
@@ -963,6 +999,13 @@ class WaveformSimpleBinaries(WaveformClass):
         return h_0_amplitues
 
     def h_plus_cross(self, t=None, frame='source'):
+        """
+        Computes the plus and cross polarization components of the gravitational wave.
+
+        :param t: (int/float/list/array)   time at which polarization components are to be computed
+        :param frame: (str) sets frame in which to compute the polarization components (source or radiation)
+        :return: dictionary with h_plus and h_cross
+        """
         if t is not None:
             if isinstance(t, np.ndarray):
                 t_temp = t
@@ -987,6 +1030,12 @@ class WaveformSimpleBinaries(WaveformClass):
 
     def h(self,
           t=None):
+        """
+        Computes the metric perturbation caused by a gravitational wave at the location of its source.
+        :param t: (int/float/list/array)   time at which metric perturbation is to be computed
+        :return: returns multi dimensional array
+        """
+
         if t is not None:
             if isinstance(t, np.ndarray):
                 t_temp = t
