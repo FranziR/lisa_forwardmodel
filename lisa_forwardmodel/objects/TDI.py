@@ -170,9 +170,18 @@ class InterSCDopplerObservable():
         # 6. computing psi values (projected GW responses)
         psi_r = np.zeros((dim_t,))
         psi_s = np.zeros((dim_t,))
-        for j in range(0, dim_t):
-            psi_r[j] = 0.5 * np.dot(np.dot(n_sr[:, j].transpose(), h_r[:, :, j]), n_sr[:, j])
-            psi_s[j] = 0.5 * np.dot(np.dot(n_sr[:, j].transpose(), h_s[:, :, j]), n_sr[:, j])
+
+        for j in range(0,3):
+            psi_r_temp = np.zeros((dim_t,))
+            psi_s_temp = np.zeros((dim_t,))
+            for i in range(0, 3):
+                psi_r_temp += n_sr[i,:]* h_r[j,i,:]
+                psi_s_temp += n_sr[i, :] * h_s[j, i, :]
+            psi_r += psi_r_temp * n_sr[j,:]
+            psi_s += psi_s_temp * n_sr[j, :]
+
+        psi_r *= 0.5
+        psi_s *= 0.5
 
         norm = 1 - np.dot(k, n_sr)
         return (psi_s - psi_r) / norm
