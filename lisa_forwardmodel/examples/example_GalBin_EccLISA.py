@@ -10,9 +10,6 @@ In all steps, no noise is considered."""
 # import all necessary packages
 import os
 import sys
-myPath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, myPath + "/../")
-
 
 import h5py
 from datetime import datetime
@@ -20,6 +17,7 @@ import argparse
 import matplotlib.pyplot as plt
 import numpy as np
 
+import lisa_forwardmodel
 from lisa_forwardmodel.objects.Simulation import Simulation
 from lisa_forwardmodel.objects.LISA import EccentricLISA, CircularLISA
 from lisa_forwardmodel.objects.TDI import InterSCDopplerObservable, TDI
